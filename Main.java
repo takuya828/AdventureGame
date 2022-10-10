@@ -3,11 +3,11 @@ import java.util.Random;
 
 class Main{
   public static void main(String[] args) {
-    Hero hero = new Hero(200, 50, 30, 80, 0);
+    Hero hero = new Hero(200, 50, 30, 80);
     int walkCount = 0;
-    while(walkCount < 20) {
-      if (isHit(10)) {
-        Enemy kuribo = new Enemy(100, 10, "クリボー", 10);
+    while(walkCount < 100) {
+      if (isHit(20)) {
+        Enemy kuribo = new Enemy(40, 10, "クリボー", 50);
         walkCount++;
         fight(hero, kuribo);
       } else {
@@ -16,7 +16,7 @@ class Main{
         walkCount++;
       }
     }
-    Enemy koopa = new Enemy(300, 60, "クッパ", 999);
+    Enemy koopa = new Enemy(200, 60, "クッパ", 999);
     fight(hero, koopa);
   }
 
@@ -109,6 +109,8 @@ class Main{
       sleepMilliSecond(1000);
       hero.getExp(enemy);
       System.out.println("貴様は経験値として" + enemy.exp + "を獲得した！");
+      hero.levelUp();
+      System.out.println(hero.level + "にレベルが上がった！");
       return true;
     }
   }
@@ -122,13 +124,15 @@ class Hero {
   public int power;
   public int healPower;
   public int exp;
+  public int level;
 
-  public Hero(int hp, int mp, int power, int healPower, int exp) {
+  public Hero(int hp, int mp, int power, int healPower) {
     this.hp = hp;
     this.mp = mp;
     this.power = power;
     this.healPower = healPower;
-    this.exp = exp;
+    this.exp = 500;
+    this.level = 1;
   }
 
   public Enemy attack(Enemy enemy) {
@@ -138,13 +142,13 @@ class Hero {
     if(Main.isHit(20)) {
       System.out.println("「そろそろ本気を出すか・・・ハァアッ！」");
       Main.sleepMilliSecond(1000);
-      randomPower = this.power * 3;
-      enemy.hp -= randomPower;
-      System.out.println("貴様の会心の一撃により" + randomPower + "のダメージを与えた");
+      randomPower = (new java.util.Random().nextInt(40) + 1) * (int)Math.pow(1.1, this.level - 1);
+      enemy.hp -= (int)((this.power * (int)Math.pow(1.1, this.level - 1)) * 1.5 + randomPower);
+      System.out.println("貴様の会心の一撃により" + (int)((this.power * (int)Math.pow(1.1, this.level - 1)) * 1.5 + randomPower) + "のダメージを与えた");
     } else {
-      randomPower = new java.util.Random().nextInt(30) + 1;
-      enemy.hp -= this.power + randomPower;
-      System.out.println((this.power + randomPower) + "のダメージを与えた");
+      randomPower = (new java.util.Random().nextInt(40) + 1) * (int)Math.pow(1.1, this.level - 1);
+      enemy.hp -= (this.power * (int)Math.pow(1.1, this.level - 1)) + randomPower;
+      System.out.println((int)(((this.power * (int)Math.pow(1.1, this.level - 1)) + randomPower)) + "のダメージを与えた");
     }
     Main.sleepMilliSecond(2000);
     if (enemy.hp < 0) {
@@ -174,18 +178,18 @@ class Hero {
   public boolean runAway() {
     int judgement = new java.util.Random().nextInt(4);
     if(judgement == 0) {
-      boolean box;
-      box = true;
-      return box;
+      return true;
     } else {
-      boolean box;
-      box = false;
-      return box;
+      return false;
     }
   }
 
   public void getExp(Enemy enemy) {
     this.exp += enemy.exp;
+  }
+
+  public void levelUp() {
+    this.level = (int)Math.floor(Math.log((float)this.exp / (float)500.0) / Math.log(1.2) + 1);
   }
 
   public boolean isAlive() {
