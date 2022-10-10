@@ -5,19 +5,57 @@ class Main{
   public static void main(String[] args) {
     Hero hero = new Hero(200, 50, 30, 80);
     int walkCount = 0;
-    while(walkCount < 100) {
-      if (isHit(20)) {
-        Enemy kuribo = new Enemy(40, 10, "クリボー", 50);
+    while(hero.isAlive() && walkCount < 100) {
+      if (isHit(10)) {
+        Enemy kuribo = selectEnemy("クリボー");
         walkCount++;
         fight(hero, kuribo);
+      } else if (isHit(10)) {
+        Enemy nokonoko = selectEnemy("ノコノコ");
+        walkCount++;
+        fight(hero, nokonoko);
+      } else if (isHit(5)) {
+        Enemy rareSlime = selectEnemy("レアスライム");
+        walkCount++;
+        fight(hero, rareSlime);
+      } else if (isHit(1)) {
+        Enemy superRareSlime = selectEnemy("スーパーレアスライム");
+        walkCount++;
+        fight(hero, superRareSlime);
       } else {
         System.out.println("Walk");
         sleepMilliSecond(500);
         walkCount++;
       }
     }
-    Enemy koopa = new Enemy(200, 60, "クッパ", 999);
-    fight(hero, koopa);
+    if (hero.isAlive() && walkCount >= 100) {
+      Enemy koopa = selectEnemy("クッパ");
+      fight(hero, koopa);
+    }
+    if (!hero.isAlive()) {
+      System.out.println("貴様は負けた。ゲームは終了だ");
+    }
+  }
+
+  public static Enemy selectEnemy(String enemyName) {
+    if (enemyName == "クリボー") {
+      Enemy kuribo = new Enemy(40, 10, "クリボー", 50);
+      return kuribo;
+    } else if (enemyName == "クッパ") {
+      Enemy koopa = new Enemy(1000, 60, "クッパ", 9999);
+      return koopa;
+    } else if (enemyName == "ノコノコ") {
+      Enemy nokonoko = new Enemy(60, 25, "ノコノコ", 70);
+      return nokonoko;
+    } else if(enemyName == "レアスライム") {
+      Enemy rareSlime = new Enemy(300, 30, "レアスライム", 1000);
+      return rareSlime;
+    } else if(enemyName == "スーパーレアスライム") {
+      Enemy superRareSlime = new Enemy(400, 40, "スーパーレアスライム", 3000);
+      return superRareSlime;
+    } else {
+      return new Enemy(0, 0, "敵", 0);
+    }
   }
 
   public static void sleepMilliSecond(int time) {
@@ -109,8 +147,10 @@ class Main{
       sleepMilliSecond(1000);
       hero.getExp(enemy);
       System.out.println("貴様は経験値として" + enemy.exp + "を獲得した！");
-      hero.levelUp();
-      System.out.println(hero.level + "にレベルが上がった！");
+      if (hero.canLevelUp()) {
+        hero.levelUp();
+        System.out.println(hero.level + "にレベルが上がった！");
+      }
       return true;
     }
   }
@@ -191,6 +231,17 @@ class Hero {
   public void levelUp() {
     this.level = (int)Math.floor(Math.log((float)this.exp / (float)500.0) / Math.log(1.2) + 1);
   }
+
+  public boolean canLevelUp() {
+    int futureLevel = (int)Math.floor(Math.log((float)this.exp / (float)500.0) / Math.log(1.2) + 1);
+    if(this.level < futureLevel) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
 
   public boolean isAlive() {
     if(this.hp <= 0) {
