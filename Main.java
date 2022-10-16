@@ -3,7 +3,7 @@ import java.util.Random;
 
 class Main{
   public static void main(String[] args) {
-    Hero hero = new Hero(200, 50, 30, 80);
+    Hero hero = new Hero(200, 200, 50, 50, 30, 80);
     int walkCount = 0;
     while(hero.isAlive() && walkCount < 100) {
       if (isHit(10)) {
@@ -14,7 +14,7 @@ class Main{
         Enemy nokonoko = selectEnemy("ノコノコ");
         walkCount++;
         fight(hero, nokonoko);
-      } else if (isHit(5)) {
+      } else if (isHit(3)) {
         Enemy rareSlime = selectEnemy("レアスライム");
         walkCount++;
         fight(hero, rareSlime);
@@ -91,9 +91,11 @@ class Main{
   public static void displayHeroStatus(Hero hero) {
     System.out.println();
     System.out.println("====================================");
-    System.out.println("|貴様のHP" + hero.hp + "                       |");
-    System.out.println("|貴様のMP" + hero.mp + "                        |");
+    System.out.println("|貴様のLevel:" + hero.level + "                      |");
+    System.out.println("|貴様のHP:" + hero.hp + "/" + hero.hpMax + "                   |");
+    System.out.println("|貴様のMP:" + hero.mp + "/" + hero.mpMax + "                     |");
     System.out.println("------------------------------------");
+    sleepMilliSecond(500);
   }
 
   public static void displayEnemyStatus(Enemy enemy) {
@@ -143,13 +145,17 @@ class Main{
     } else {
       System.out.println(enemy.name + "をやっつけた！");
       sleepMilliSecond(1000);
-      System.out.println("貴様の勝利！よくやった！「また今回も私を死なせてくれないようだ・・・」");
+      System.out.println("貴様の勝利！「我、最強…」");
       sleepMilliSecond(1000);
       hero.getExp(enemy);
       System.out.println("貴様は経験値として" + enemy.exp + "を獲得した！");
+      sleepMilliSecond(1000);
       if (hero.canLevelUp()) {
         hero.levelUp();
         System.out.println(hero.level + "にレベルが上がった！");
+        sleepMilliSecond(1500);
+        displayHeroStatus(hero);
+        sleepMilliSecond(500);
       }
       return true;
     }
@@ -160,15 +166,19 @@ class Main{
 
 class Hero {
   public int hp;
+  public int hpMax;
   public int mp;
+  public int mpMax;
   public int power;
   public int healPower;
   public int exp;
   public int level;
 
-  public Hero(int hp, int mp, int power, int healPower) {
+  public Hero(int hp, int hpMax, int mp, int mpMax, int power, int healPower) {
     this.hp = hp;
+    this.hpMax = hpMax;
     this.mp = mp;
+    this.mpMax = mpMax;
     this.power = power;
     this.healPower = healPower;
     this.exp = 500;
@@ -180,8 +190,8 @@ class Hero {
     Main.sleepMilliSecond(1000);
     int randomPower = 0;
     if(Main.isHit(20)) {
-      System.out.println("「そろそろ本気を出すか・・・ハァアッ！」");
-      Main.sleepMilliSecond(1000);
+      System.out.println("「限界突破…！ハァアッ！」");
+      Main.sleepMilliSecond(2000);
       randomPower = (new java.util.Random().nextInt(40) + 1) * (int)Math.pow(1.1, this.level - 1);
       enemy.hp -= (int)((this.power * (int)Math.pow(1.1, this.level - 1)) * 1.5 + randomPower);
       System.out.println("貴様の会心の一撃により" + (int)((this.power * (int)Math.pow(1.1, this.level - 1)) * 1.5 + randomPower) + "のダメージを与えた");
@@ -198,12 +208,13 @@ class Hero {
   }
 
   public Hero heal(Hero hero) {
-    System.out.println("回復だと！？情けない奴め！");
+    System.out.println("「我に極上の癒しを…！」");
     Main.sleepMilliSecond(2000);
+    int randomHeal = 0;
     if (hero.mp >= 5){
-      int randomHeal = new java.util.Random().nextInt(30) + 1;
-      hero.hp += this.healPower + randomHeal;
-      System.out.println("貴様は" + (this.healPower + randomHeal) + "回復した！");
+      randomHeal = (new java.util.Random().nextInt(30) + 1) * (int)Math.pow(1.1, this.level - 1);
+      hero.hp += (this.healPower * (int)Math.pow(1.1, this.level - 1)) + randomHeal;
+      System.out.println("貴様は" + (int)(((this.healPower * (int)Math.pow(1.1, this.level - 1)) + randomHeal)) + "回復した！");
       Main.sleepMilliSecond(1000);
       hero.mp -= 5;
       System.out.println("貴様のMPは残り" + hero.mp);
@@ -229,7 +240,12 @@ class Hero {
   }
 
   public void levelUp() {
+    int diffLevel = (int)Math.floor(Math.log((float)this.exp / (float)500.0) / Math.log(1.2) + 1) - this.level;
     this.level = (int)Math.floor(Math.log((float)this.exp / (float)500.0) / Math.log(1.2) + 1);
+    this.mpMax = (int)(this.mpMax * Math.pow(1.2, diffLevel));
+    this.mp = this.mpMax;
+    this.hpMax = (int)(this.hpMax * Math.pow(1.2, diffLevel));
+    this.hp = this.hpMax;
   }
 
   public boolean canLevelUp() {
