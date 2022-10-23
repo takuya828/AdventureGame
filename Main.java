@@ -1,11 +1,49 @@
 import java.util.concurrent.TimeUnit;
 import java.util.Random;
+import java.util.Scanner;
 
 class Main{
   public static void main(String[] args) {
     Hero hero = new Hero(200, 200, 50, 50, 30, 80);
-    int walkCount = 0;
-    while(hero.isAlive() && walkCount < 100) {
+    System.out.println("ステージを選んでください[1:草原　2:葛飾野高校　3:城]");
+    System.out.print("=> ");
+    int userSelect = new Scanner(System.in).nextInt();
+    if (userSelect == 1) {
+      System.out.println("草原…始まりの大地。始めの一歩。雑魚どもを蹴散らしていけ");
+      sleepMilliSecond(2500);
+      FirstStage.playFirstStage(hero);
+      SecondStage.playSecondStage(hero);
+    } else if (userSelect == 2) {
+      System.out.println("葛飾野高校…OB達が洗脳されてしまった！？彼らを救え！");
+      sleepMilliSecond(2500);
+      SecondStage.playSecondStage(hero);
+    }
+  }
+    public static void sleepMilliSecond(int time) {
+    try {
+      TimeUnit.MILLISECONDS.sleep(time);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+   public static boolean isHit(int percent) {
+    int num = new Random().nextInt(100) + 1;
+    boolean box;
+    if (num < percent) {
+      box = true;
+    } else {
+      box = false;
+    }
+    return box;
+  }
+}
+
+
+
+  class FirstStage {
+    public static void playFirstStage(Hero hero) {
+      int walkCount = 0;
+    while(hero.isAlive() && walkCount < 10) {
       if (isHit(10)) {
         Enemy kuribo = selectEnemy("クリボー");
         walkCount++;
@@ -28,7 +66,7 @@ class Main{
         walkCount++;
       }
     }
-    if (hero.isAlive() && walkCount >= 100) {
+    if (hero.isAlive() && walkCount >= 10) {
       Enemy koopa = selectEnemy("クッパ");
       fight(hero, koopa);
     }
@@ -37,12 +75,13 @@ class Main{
     }
   }
 
+
   public static Enemy selectEnemy(String enemyName) {
     if (enemyName == "クリボー") {
       Enemy kuribo = new Enemy(40, 10, "クリボー", 50);
       return kuribo;
     } else if (enemyName == "クッパ") {
-      Enemy koopa = new Enemy(1000, 60, "クッパ", 9999);
+      Enemy koopa = new Enemy(1, 60, "クッパ", 9999);
       return koopa;
     } else if (enemyName == "ノコノコ") {
       Enemy nokonoko = new Enemy(60, 25, "ノコノコ", 70);
@@ -160,8 +199,172 @@ class Main{
       return true;
     }
   }
-
 }
+
+
+class SecondStage {
+    public static void playSecondStage(Hero hero) {
+      int walkCount = 0;
+    while(hero.isAlive() && walkCount < 30) {
+      if (isHit(10)) {
+        Enemy kenta = selectEnemy("筋肉野郎");
+        walkCount++;
+        fight(hero, kenta);
+      } else if (isHit(10)) {
+        Enemy hiroshi = selectEnemy("じゃがいも小僧");
+        walkCount++;
+        fight(hero, hiroshi);
+      } else if (isHit(10)) {
+        Enemy yuki = selectEnemy("地獄のメガネ");
+        walkCount++;
+        fight(hero, yuki);
+      } else if (isHit(10)){
+        Enemy ryo = selectEnemy("神奈川県民");
+        walkCount++;
+        fight(hero, ryo);
+      } else {
+        System.out.println("Walk");
+        sleepMilliSecond(500);
+        walkCount++;
+      }
+    }
+    if (hero.isAlive() && walkCount >= 30) {
+      System.out.println("けんた&ひろし&ゆうき&りょう「合体…!!!");
+      sleepMilliSecond(2000);
+      Enemy muslePotetoGlass = selectEnemy("神奈川の地獄のマッスルポテトメガネくん");
+      fight(hero, muslePotetoGlass);
+    }
+    if (!hero.isAlive()) {
+      System.out.println("貴様は負けた。ゲームは終了だ");
+    }
+  }
+
+
+  public static Enemy selectEnemy(String enemyName) {
+    if (enemyName == "筋肉野郎") {
+      Enemy kenta = new Enemy(40, 10, "筋肉野郎", 50);
+      return kenta;
+    } else if (enemyName == "神奈川の地獄のマッスルポテトメガネくん") {
+      Enemy muslePotetoGlass = new Enemy(1000, 60, "神奈川の地獄のマッスルポテトメガネくん", 9999);
+      return muslePotetoGlass;
+    } else if (enemyName == "じゃがいも小僧") {
+      Enemy hiroshi = new Enemy(60, 25, "じゃがいも小僧", 70);
+      return hiroshi;
+    } else if(enemyName == "地獄のメガネ") {
+      Enemy yuki = new Enemy(300, 30, "地獄のメガネ", 1000);
+      return yuki;
+    } else if(enemyName == "神奈川県民") {
+      Enemy ryo = new Enemy(100, 30, "神奈川県民", 1);
+      return ryo;
+    } else {
+      return new Enemy(0, 0, "敵", 0);
+    }
+  }
+
+  public static void sleepMilliSecond(int time) {
+    try {
+      TimeUnit.MILLISECONDS.sleep(time);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static boolean isHit(int percent) {
+    int num = new Random().nextInt(100) + 1;
+    boolean box;
+    if (num < percent) {
+      box = true;
+    } else {
+      box = false;
+    }
+    return box;
+  }
+
+  public static void displayMenu() {
+    System.out.println();
+    System.out.println("====================================");
+    System.out.println("| 1:攻撃                            |");
+    System.out.println("| 2:回復                            |");
+    System.out.println("| 3:逃げる                          |");
+    System.out.println("------------------------------------");
+    System.out.print("=> ");
+  }
+
+
+  public static void displayHeroStatus(Hero hero) {
+    System.out.println();
+    System.out.println("====================================");
+    System.out.println("|貴様のLevel:" + hero.level + "                      |");
+    System.out.println("|貴様のHP:" + hero.hp + "/" + hero.hpMax + "                   |");
+    System.out.println("|貴様のMP:" + hero.mp + "/" + hero.mpMax + "                     |");
+    System.out.println("------------------------------------");
+    sleepMilliSecond(500);
+  }
+
+  public static void displayEnemyStatus(Enemy enemy) {
+    System.out.println();
+    System.out.println("====================================");
+    System.out.println("|" + enemy.name + "のHP" + enemy.hp + "                       |");
+    System.out.println("------------------------------------");
+  }
+
+  public static boolean fight(Hero hero, Enemy enemy) {
+    System.out.println(enemy.name + "が現れた！");
+    while(enemy.isAlive() && hero.isAlive()) {
+      sleepMilliSecond(1000);
+      displayHeroStatus(hero);
+      displayMenu();
+      int command = new java.util.Scanner(System.in).nextInt();
+      System.out.println("");
+      if (command == 1) {
+        enemy = hero.attack(enemy);
+        if (enemy.isAlive()){
+          hero = enemy.attack(hero);
+        }
+      } else if (command == 2) {
+        hero = hero.heal(hero);
+        hero = enemy.attack(hero);
+      } else if (command == 3) {
+        System.out.println("貴様は『逃げる』を選択した！この臆病者！");
+        sleepMilliSecond(1000);
+        if (hero.runAway() == true) {
+          System.out.println("成功した！貴様は『逃げた』！このチキン野郎！");
+          return true;
+        } else {
+          System.out.println("逃げられると思ったか！さっさと戦え！");
+          sleepMilliSecond(2000);
+          System.out.println("ほれ！" + enemy.name + "の攻撃がきたぞ！くらえ！");
+          sleepMilliSecond(1000);
+          hero = enemy.attack(hero);
+        }
+      }
+    }
+    if(!hero.isAlive()) {
+      Main.sleepMilliSecond(2000);
+      System.out.println("貴様は" + enemy.name + "に負けた！「死ぬには良い日だ…」");
+      sleepMilliSecond(1000);
+      System.out.println("この『敗北者』め！");
+      return false;
+    } else {
+      System.out.println(enemy.name + "をやっつけた！");
+      sleepMilliSecond(1000);
+      System.out.println("貴様の勝利！「我、最強…」");
+      sleepMilliSecond(1000);
+      hero.getExp(enemy);
+      System.out.println("貴様は経験値として" + enemy.exp + "を獲得した！");
+      sleepMilliSecond(1000);
+      if (hero.canLevelUp()) {
+        hero.levelUp();
+        System.out.println(hero.level + "にレベルが上がった！");
+        sleepMilliSecond(1500);
+        displayHeroStatus(hero);
+        sleepMilliSecond(500);
+      }
+      return true;
+    }
+  }
+}
+
 
 
 class Hero {
