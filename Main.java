@@ -15,7 +15,7 @@ class Main{
         walkCount++;
         fight(hero, nokonoko);
       } else if (isHit(3)) {
-        Enemy rareSlime = selectEnemy("レアスライム");
+        Enemy rareSlime = selectEnemy("クリボー隊長");
         walkCount++;
         fight(hero, rareSlime);
       } else if (isHit(1)) {
@@ -47,11 +47,11 @@ class Main{
     } else if (enemyName == "ノコノコ") {
       Enemy nokonoko = new Enemy(60, 25, "ノコノコ", 70);
       return nokonoko;
-    } else if(enemyName == "レアスライム") {
-      Enemy rareSlime = new Enemy(300, 30, "レアスライム", 1000);
+    } else if(enemyName == "クリボー隊長") {
+      Enemy rareSlime = new Enemy(300, 30, "クリボー隊長", 1000);
       return rareSlime;
     } else if(enemyName == "スーパーレアスライム") {
-      Enemy superRareSlime = new Enemy(400, 40, "スーパーレアスライム", 3000);
+      Enemy superRareSlime = new Enemy(100, 40, "スーパーレアスライム", 3000);
       return superRareSlime;
     } else {
       return new Enemy(0, 0, "敵", 0);
